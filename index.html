@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crypto Press Release Generator</title>
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #3498db;
+            --accent-color: #27ae60;
+            --error-color: #e74c3c;
+            --background-light: #f8f9fa;
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            line-height: 1.6;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+
+        .form-container {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+        }
+
+        .form-section {
+            margin-bottom: 2rem;
+            padding: 1.5rem;
+            border: 1px solid #eee;
+            border-radius: 8px;
+        }
+
+        h2 {
+            color: var(--primary-color);
+            border-bottom: 2px solid var(--secondary-color);
+            padding-bottom: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+            display: grid;
+            gap: 0.5rem;
+        }
+
+        label {
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+
+        .required label::after {
+            content: "*";
+            color: var(--error-color);
+            margin-left: 3px;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 0.8rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 1rem;
+        }
+
+        .dynamic-controls {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .add-btn, .remove-btn {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: transform 0.2s;
+            font-size: 1.2em;
+            border: none;
+        }
+
+        .add-btn {
+            background: var(--accent-color);
+            color: white;
+        }
+
+        .remove-btn {
+            background: var(--error-color);
+            color: white;
+        }
+
+        .dynamic-item {
+            position: relative;
+            padding: 15px;
+            border: 1px solid #eee;
+            margin: 10px 0;
+            border-radius: 8px;
+            background: var(--background-light);
+        }
+
+        .spokesperson-title {
+            color: var(--secondary-color);
+            margin-bottom: 1rem;
+        }
+
+        .conditional-section {
+            display: none;
+        }
+
+        .visible {
+            display: block;
+        }
+
+        .button-group {
+            margin-top: 2rem;
+            display: flex;
+            gap: 1rem;
+        }
+
+        .boilerplate-preview {
+            background-color: var(--background-light);
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 10px;
+        }
+
+        .company-group {
+            border-left: 3px solid var(--secondary-color);
+            padding-left: 15px;
+            margin: 15px 0;
+        }
+
+        .social-field {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .platform-select {
+            flex: 0 0 120px;
+        }
+    </style>
+</head>
+<body>
+    <div class="form-container">
+        <form id="pressReleaseForm">
+            <!-- Section 1: Category -->
+            <div class="form-section">
+                <h2>1. Press Release Category</h2>
+                <div class="form-group required">
+                    <label>Select Category</label>
+                    <select id="category" required>
+                        <option value="">Choose Category</option>
+                        <option>Launch</option>
+                        <option>Funding</option>
+                        <option>Partnership</option>
+                        <option>Milestone</option>
+                        <option>Campaign</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Section 2: Location -->
+            <div class="form-section">
+                <h2>2. Location Information</h2>
+                <div class="form-group required">
+                    <label>City</label>
+                    <input type="text" required>
+                </div>
+                <div class="form-group required">
+                    <label>State/Province</label>
+                    <input type="text" required>
+                </div>
+                <div class="form-group required">
+                    <label>Country</label>
+                    <input type="text" required>
+                </div>
+            </div>
+
+            <!-- Section 3: Date -->
+            <div class="form-section">
+                <h2>3. Announcement Date</h2>
+                <div class="form-group required">
+                    <label>Date</label>
+                    <input type="date" required>
+                </div>
+            </div>
+
+            <!-- Section 4: Primary Company -->
+            <div class="form-section">
+                <h2>4. Company Information</h2>
+                <div class="company-group">
+                    <div class="form-group required">
+                        <label>Company Name</label>
+                        <input type="text" id="companyName" required>
+                    </div>
+                    <div class="form-group required">
+                        <label>Company Description</label>
+                        <textarea id="companyDescription" required maxlength="120"></textarea>
+                    </div>
+                    <div class="form-group required">
+                        <label>Website URL</label>
+                        <input type="url" required>
+                    </div>
+                    
+                    <!-- Auto-generated Boilerplate -->
+                    <div class="form-group required">
+                        <label>Boilerplate Text</label>
+                        <div class="boilerplate-preview">
+                            <textarea id="boilerplate" required rows="3"></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Social Media Section -->
+                <div class="dynamic-item">
+                    <h3>Social Media Links</h3>
+                    <div id="socialContainer">
+                        <div class="social-field">
+                            <select class="platform-select">
+                                <option>Twitter</option>
+                                <option>LinkedIn</option>
+                                <option>Telegram</option>
+                                <option>Discord</option>
+                                <option>Other</option>
+                            </select>
+                            <input type="url" placeholder="URL">
+                            <div class="dynamic-controls">
+                                <button type="button" class="add-btn" onclick="addSocialField()">+</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 5: Spokespeople -->
+            <div class="form-section">
+                <h2>5. Spokespeople</h2>
+                <div id="spokespersonContainer">
+                    <div class="dynamic-item">
+                        <h4 class="spokesperson-title">Primary Spokesperson</h4>
+                        <div class="form-group required">
+                            <label>Name</label>
+                            <input type="text" required>
+                        </div>
+                        <div class="form-group required">
+                            <label>Title</label>
+                            <input type="text" required>
+                        </div>
+                        <div class="form-group required">
+                            <label>Quote</label>
+                            <textarea required></textarea>
+                        </div>
+                        <div class="dynamic-controls">
+                            <button type="button" class="add-btn" onclick="addSpokesperson()">+</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 6: Core Content -->
+            <div class="form-section">
+                <h2>6. Core Content</h2>
+                <div class="form-group required">
+                    <label>Primary Message</label>
+                    <textarea required rows="4"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Secondary Message</label>
+                    <textarea rows="3"></textarea>
+                </div>
+                <div class="form-group required">
+                    <label>Proposed Title</label>
+                    <input type="text" required>
+                </div>
+            </div>
+
+            <!-- Section 7: Details -->
+            <div class="form-section">
+                <h2>7. Detailed Information</h2>
+                <div class="form-group required">
+                    <label>Comprehensive Description</label>
+                    <textarea required rows="5"></textarea>
+                </div>
+                <div class="form-group required">
+                    <label>Key Details</label>
+                    <textarea required rows="3"></textarea>
+                </div>
+            </div>
+
+            <!-- Section 8: Partners (Conditional) -->
+            <div class="form-section conditional-section" id="partnersSection">
+                <h2>8. Partner Companies</h2>
+                <div id="companyContainer">
+                    <div class="dynamic-item">
+                        <h4>Partner Company #1</h4>
+                        <div class="form-group">
+                            <label>Company Name</label>
+                            <input type="text" class="partner-name">
+                        </div>
+                        <div class="form-group">
+                            <label>Company Description</label>
+                            <textarea class="partner-description"></textarea>
+                        </div>
+                        <div class="dynamic-controls">
+                            <button type="button" class="add-btn" onclick="addPartnerCompany()">+</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 9: Supplementary Info -->
+            <div class="form-section">
+                <h2>9. Supplementary Information</h2>
+                <div class="form-group required">
+                    <label>Contact Name</label>
+                    <input type="text" required>
+                </div>
+                <div class="form-group required">
+                    <label>Contact Email</label>
+                    <input type="email" required>
+                </div>
+                <div class="form-group">
+                    <label>Contact Phone</label>
+                    <input type="tel">
+                </div>
+            </div>
+
+            <div class="button-group">
+                <button type="submit" class="submit-btn">Generate Press Release</button>
+                <button type="button" onclick="clearForm()">Clear Form</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Templates -->
+    <template id="partnerCompanyTemplate">
+        <div class="dynamic-item">
+            <h4 class="partner-title">Partner Company</h4>
+            <div class="form-group">
+                <label>Company Name</label>
+                <input type="text" class="partner-name">
+            </div>
+            <div class="form-group">
+                <label>Company Description</label>
+                <textarea class="partner-description"></textarea>
+            </div>
+            <div class="dynamic-controls">
+                <button type="button" class="add-btn" onclick="addPartnerCompany()">+</button>
+                <button type="button" class="remove-btn" onclick="removeItem(this)">−</button>
+            </div>
+        </div>
+    </template>
+
+    <template id="spokespersonTemplate">
+        <div class="dynamic-item">
+            <h4 class="spokesperson-title">Secondary Spokesperson</h4>
+            <div class="form-group">
+                <label>Name</label>
+                <input type="text">
+            </div>
+            <div class="form-group">
+                <label>Title</label>
+                <input type="text">
+            </div>
+            <div class="form-group">
+                <label>Quote</label>
+                <textarea></textarea>
+            </div>
+            <div class="dynamic-controls">
+                <button type="button" class="add-btn" onclick="addSpokesperson()">+</button>
+                <button type="button" class="remove-btn" onclick="removeItem(this)">−</button>
+            </div>
+        </div>
+    </template>
+
+    <template id="socialTemplate">
+        <div class="social-field">
+            <select class="platform-select">
+                <option>Twitter</option>
+                <option>LinkedIn</option>
+                <option>Telegram</option>
+                <option>Discord</option>
+                <option>Other</option>
+            </select>
+            <input type="url" placeholder="URL">
+            <div class="dynamic-controls">
+                <button type="button" class="remove-btn" onclick="removeItem(this)">−</button>
+            </div>
+        </div>
+    </template>
+
+    <script>
+        // Dynamic Fields Management
+        let partnerCount = 1;
+        let spokespersonCount = 1;
+
+        function addPartnerCompany() {
+            const template = document.getElementById('partnerCompanyTemplate');
+            const clone = template.content.cloneNode(true);
+            partnerCount++;
+            clone.querySelector('.partner-title').textContent = `Partner Company #${partnerCount}`;
+            document.getElementById('companyContainer').appendChild(clone);
+        }
+
+        function addSpokesperson() {
+            const template = document.getElementById('spokespersonTemplate');
+            const clone = template.content.cloneNode(true);
+            spokespersonCount++;
+            clone.querySelector('.spokesperson-title').textContent = 
+                `${getOrdinal(spokespersonCount)} Spokesperson`;
+            document.getElementById('spokespersonContainer').appendChild(clone);
+        }
+
+        function addSocialField() {
+            const template = document.getElementById('socialTemplate');
+            const clone = template.content.cloneNode(true);
+            document.getElementById('socialContainer').appendChild(clone);
+        }
+
+        function removeItem(button) {
+            button.closest('.dynamic-item, .social-field').remove();
+            updateSpokespersonTitles();
+            updatePartnerNumbers();
+        }
+
+        // Helper functions
+        function getOrdinal(n) {
+            const s = ["th", "st", "nd", "rd"];
+            const v = n % 100;
+            return n + (s[(v-20)%10] || s[v] || s[0]);
+        }
+
+        function updateSpokespersonTitles() {
+            const spokespeople = document.querySelectorAll('#spokespersonContainer .dynamic-item');
+            spokespersonCount = spokespeople.length;
+            spokespeople.forEach((item, index) => {
+                const title = item.querySelector('.spokesperson-title');
+                title.textContent = index === 0 ? 
+                    "Primary Spokesperson" : 
+                    `${getOrdinal(index+1)} Spokesperson`;
+            });
+        }
+
+        function updatePartnerNumbers() {
+            const partners = document.querySelectorAll('#companyContainer .dynamic-item');
+            partners.forEach((item, index) => {
+                item.querySelector('.partner-title').textContent = `Partner Company #${index+1}`;
+            });
+            partnerCount = partners.length;
+        }
+
+        // Boilerplate Generation
+        function updateBoilerplate() {
+            const name = document.getElementById('companyName').value;
+            const desc = document.getElementById('companyDescription').value;
+            document.getElementById('boilerplate').value = 
+                `About ${name || '[Company Name]'}: ${desc || '[Company Description]'}`;
+        }
+
+        // Event Listeners
+        document.getElementById('category').addEventListener('change', function() {
+            const partnersSection = document.getElementById('partnersSection');
+            partnersSection.style.display = this.value === 'Partnership' ? 'block' : 'none';
+            if(this.value !== 'Partnership') {
+                document.getElementById('companyContainer').innerHTML = '';
+                partnerCount = 1;
+                addPartnerCompany();
+            }
+        });
+
+        document.getElementById('companyName').addEventListener('input', updateBoilerplate);
+        document.getElementById('companyDescription').addEventListener('input', updateBoilerplate);
+
+        // Form Handling
+        document.getElementById('pressReleaseForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const formData = new FormData(this);
+            const data = Object.fromEntries(formData.entries());
+            console.log('Form Data:', data);
+            alert('Press release generated! Check console for data.');
+        });
+
+        function clearForm() {
+            document.getElementById('pressReleaseForm').reset();
+            partnerCount = 1;
+            spokespersonCount = 1;
+            document.getElementById('companyContainer').innerHTML = '';
+            document.getElementById('spokespersonContainer').innerHTML = '';
+            document.getElementById('socialContainer').innerHTML = '';
+            addPartnerCompany();
+            addSpokesperson();
+            addSocialField();
+            updateBoilerplate();
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            addPartnerCompany();
+            addSpokesperson();
+            addSocialField();
+            updateBoilerplate();
+            document.getElementById('category').dispatchEvent(new Event('change'));
+        });
+    </script>
+</body>
+</html>
